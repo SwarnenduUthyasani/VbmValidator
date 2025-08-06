@@ -3,673 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VBM Validator</title>
-    <link href="/webjars/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>VBM Validator - Geometric Flow</title>
     <style>
-        :root {
-            --primary: #1a365d;
-            --secondary: #2d3748;
-            --accent: #3182ce;
-            --success: #38a169;
-            --error: #e53e3e;
-            --warning: #d69e2e;
-            --light-bg: #f8fafc;
-            --white: #ffffff;
-            --gray-50: #f9fafb;
-            --gray-100: #f7fafc;
-            --gray-200: #edf2f7;
-            --gray-300: #e2e8f0;
-            --gray-400: #cbd5e0;
-            --gray-500: #a0aec0;
-            --gray-600: #718096;
-            --gray-700: #4a5568;
-            --gray-800: #2d3748;
-            --gray-900: #1a202c;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-bg);
-            color: var(--gray-800);
-            line-height: 1.5;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .main-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header - Compact */
-        .header {
-            background: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            padding: 1rem 0;
-            box-shadow: var(--shadow);
-            flex-shrink: 0;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            text-align: center;
-        }
-
-        .header-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.025em;
-        }
-
-        .header-subtitle {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            font-weight: 400;
-        }
-
-        /* Content - Full remaining height */
-        .content-wrapper {
-            flex: 1;
-            padding: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .upload-container {
-            background: var(--white);
-            border-radius: 8px;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-        }
-
-        .container-header {
-            background: var(--gray-50);
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            flex-shrink: 0;
-        }
-
-        .container-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--primary);
+            min-height: 100vh;
             margin: 0;
-        }
-
-        .container-body {
-            padding: 1.5rem;
-            flex: 1;
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
+            background-color: #eef2f3;
             display: flex;
-            flex-direction: column;
-            min-height: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
-        .alert {
-            border-radius: 6px;
-            border: none;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
-            border-left: 4px solid;
-            font-size: 0.875rem;
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            z-index: 0;
+            background-image: linear-gradient(to top, #eef2f3, #eef2f3); /* Fallback background */
         }
-
-        .alert-danger {
-            background: rgba(229, 62, 62, 0.1);
-            color: var(--error);
-            border-left-color: var(--error);
+        .shape-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            z-index: 0;
+            overflow: hidden; /* Contain the shapes within bounds */
         }
-
-        .alert-success {
-            background: rgba(56, 161, 105, 0.1);
-            color: var(--success);
-            border-left-color: var(--success);
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
         }
-
-        /* Main Upload Layout - Side by Side */
-        .upload-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            flex: 1;
-            min-height: 0;
+        .shape1 {
+            width: 400px; height: 400px;
+            background: #8e9eab;
+            top: -50px; left: -50px;
+            animation: move 20s infinite alternate;
         }
-
-        .upload-section {
+        .shape2 {
+            width: 500px; height: 500px;
+            background: #4facfe;
+            bottom: -75px; right: -75px;
+            animation: move 25s infinite alternate-reverse;
+        }
+        @keyframes move {
+            from { transform: translate(0, 0) rotate(0deg) scale(1); }
+            to { transform: translate(50px, 25px) rotate(45deg) scale(1.1); }
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+            max-height: calc(100vh - 2rem); /* Ensure it fits within viewport */
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 2.5rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            box-sizing: border-box; /* Include padding in height calculation */
+            overflow-y: auto; /* Allow internal scrolling if content is too tall */
+        }
+        .heading {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+        .upload-row {
             display: flex;
-            flex-direction: column;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-
-        .section-label {
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 0.75rem;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .file-upload-area {
-            border: 2px dashed var(--gray-300);
-            border-radius: 6px;
+        .upload-card {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 1.5rem;
             padding: 1.5rem;
             text-align: center;
-            transition: all 0.2s ease;
-            background: var(--gray-50);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .upload-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+        }
+        .upload-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #34495e;
+            margin-bottom: 1rem;
+        }
+        .upload-area {
+            border: 2px dashed #bdc3c7;
+            border-radius: 1rem;
+            padding: 2rem 1rem;
             cursor: pointer;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 120px;
+            transition: border-color 0.3s, background-color 0.3s;
         }
-
-        .file-upload-area:hover {
-            border-color: var(--accent);
-            background: rgba(49, 130, 206, 0.05);
+        .upload-area.filled {
+            border-style: solid;
+            border-color: #4facfe;
         }
-
-        .file-upload-area.dragover {
-            border-color: var(--accent);
-            background: rgba(49, 130, 206, 0.1);
-        }
-
-        .file-upload-area.has-file {
-            border-color: var(--success);
-            background: rgba(56, 161, 105, 0.05);
-        }
-
-        .upload-text {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .upload-hint {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        .file-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-        }
-
         .file-info {
-            margin-top: 0.75rem;
-            padding: 0.75rem;
-            background: var(--white);
-            border-radius: 4px;
-            border: 1px solid var(--gray-200);
-            display: none;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #34495e;
+            word-break: break-word;
         }
-
-        .file-info.show {
-            display: block;
-        }
-
-        .file-name {
-            font-weight: 500;
-            color: var(--gray-800);
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .file-size {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-        }
-
-        .file-remove {
+        .remove-btn {
+            color: #c0392b;
             background: none;
             border: none;
-            color: var(--error);
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-top: 0.5rem;
-            padding: 0;
-        }
-
-        .file-remove:hover {
             text-decoration: underline;
-        }
-
-        /* SOB Type and Submit Section */
-        .bottom-section {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-200);
-            flex-shrink: 0;
-        }
-
-        .sob-type-section {
-            grid-column: 1 / -1;
-            margin: 1.5rem 0;
-        }
-
-        .sob-type-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            color: var(--text-primary);
-            background: var(--bg-white);
-            transition: all 0.3s ease;
-            margin-top: 0.5rem;
-        }
-
-        .sob-type-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .sob-type-select:invalid {
-            border-color: #ef4444;
-        }
-
-        .sob-type-hint {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-        }
-
-        /* Update submit button positioning */
-        .submit-btn {
-            grid-column: 1 / -1;
-            width: 100%;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--primary-color), #1e40af);
-            color: blue;
-            border: grey;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
-
-        .submit-btn:disabled {
-            background: var(--border-color);
-            cursor: not-allowed;
-            transform: none;
+        .sob-type-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #d1d5db;
+            text-align: center;
         }
-
-        .submit-btn:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        .sob-type-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #34495e;
+            margin-bottom: 1rem;
+            display: block;
         }
-
-        .submit-btn.loading {
-            background: var(--border-color);
-            cursor: not-allowed;
+        .sob-type-options {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
         }
-
-        .submit-btn .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .sob-type-options label {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #34495e;
+        }
+        .sob-type-options input {
             margin-right: 0.5rem;
         }
-
-        .submit-btn.loading .spinner {
-            display: inline-block;
+        .actions {
+            text-align: center;
+            margin-top: 2.5rem;
         }
-
-        .loading-spinner {
-            display: none;
-            margin-right: 0.5rem;
+        .validate-btn {
+            background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
         }
-
-        .loading .loading-spinner {
-            display: inline-block;
+        .validate-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: none;
         }
-
-        .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .validate-btn:not(:disabled):hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .alert {
+            margin-bottom: 1.5rem;
         }
-
-        .status-text {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-            flex: 1;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-            .upload-layout {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .file-upload-area {
-                min-height: 100px;
-                padding: 1rem;
-            }
-        }
-
         @media (max-width: 768px) {
-            .content-wrapper {
-                padding: 1rem;
+            body {
+                padding: 0.5rem; /* Reduce padding on mobile */
             }
-            
-            .container-body {
-                padding: 1rem;
+            .container {
+                padding: 1.5rem; /* Reduce container padding on mobile */
+                border-radius: 1.5rem;
             }
-            
-            .sob-type-options {
-                flex-direction: column;
-                gap: 0.5rem;
+            .upload-row { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 1rem; /* Reduce gap on mobile */
             }
-            
-            .submit-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .submit-btn {
-                width: 100%;
-            }
-        }
-
-        /* Ensure no scrolling on 13-inch laptops */
-        @media (min-width: 1024px) and (max-height: 800px) {
-            .header {
-                padding: 0.75rem 0;
-            }
-            
-            .header-title {
-                font-size: 1.5rem;
-            }
-            
-            .header-subtitle {
-                display: none;
-            }
-            
-            .content-wrapper {
-                padding: 1rem;
-            }
-            
-            .container-body {
-                padding: 1rem;
-            }
-            
-            .file-upload-area {
-                min-height: 100px;
-                padding: 1rem;
+            .heading {
+                font-size: 2rem; /* Slightly smaller heading on mobile */
+                margin-bottom: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-content">
-                <h1 class="header-title">VBM Validator</h1>
-                <p class="header-subtitle">Validate Vendor Benefit Matrix against Summary of Benefits</p>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="content-wrapper">
-            <div class="upload-container">
-                <div class="container-header">
-                    <h2 class="container-title">Document Upload</h2>
-                </div>
-                <div class="container-body">
-                    <!-- Error/Success Messages -->
-                    <div th:if="${error}" class="alert alert-danger" role="alert">
-                        <span th:text="${error}">Error message</span>
-                    </div>
-
-                    <div th:if="${success}" class="alert alert-success" role="alert">
-                        <span th:text="${success}">Success message</span>
-                    </div>
-
-                    <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
-                        <!-- File Upload Layout - Side by Side -->
-                        <div class="upload-layout">
-                            <!-- SOB File Upload -->
-                            <div class="upload-section">
-                                <label class="section-label">Summary of Benefits (SOB)</label>
-                                <div class="file-upload-area" onclick="document.getElementById('sobFile').click()" 
-                                     ondrop="handleDrop(event, 'sobFile')" 
-                                     ondragover="handleDragOver(event)"
-                                     ondragleave="handleDragLeave(event)"
-                                     id="sobUploadArea">
-                                    <div class="upload-text">Click to select SOB file</div>
-                                    <div class="upload-hint">Excel (.xlsx) or PDF format</div>
-                                    <input type="file" id="sobFile" name="sobFile" class="file-input" 
-                                           accept=".xlsx,.xls,.pdf,.csv" onchange="handleFileSelect(this, 'sobUploadArea')" required>
-                                </div>
-                                <div id="sobFileInfo" class="file-info">
-                                    <div class="file-name" id="sobFileName"></div>
-                                    <div class="file-size" id="sobFileSize"></div>
-                                    <button type="button" class="file-remove" onclick="removeFile('sobFile', 'sobUploadArea')">Remove</button>
-                                </div>
-                            </div>
-
-                            <!-- VBM File Upload -->
-                            <div class="upload-section">
-                                <label class="section-label">Vendor Benefit Matrix (VBM)</label>
-                                <div class="file-upload-area" onclick="document.getElementById('vendorMatrixFile').click()"
-                                     ondrop="handleDrop(event, 'vendorMatrixFile')" 
-                                     ondragover="handleDragOver(event)"
-                                     ondragleave="handleDragLeave(event)"
-                                     id="vbmUploadArea">
-                                    <div class="upload-text">Click to select VBM file</div>
-                                    <div class="upload-hint">Excel (.xlsx) or CSV format</div>
-                                    <input type="file" id="vendorMatrixFile" name="vendorMatrixFile" class="file-input" 
-                                           accept=".xlsx,.xls,.csv" onchange="handleFileSelect(this, 'vbmUploadArea')" required>
-                                </div>
-                                <div id="vbmFileInfo" class="file-info">
-                                    <div class="file-name" id="vbmFileName"></div>
-                                    <div class="file-size" id="vbmFileSize"></div>
-                                    <button type="button" class="file-remove" onclick="removeFile('vendorMatrixFile', 'vbmUploadArea')">Remove</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SOB Type Selection -->
-                        <div class="sob-type-section">
-                            <label class="section-label">SOB Type Selection</label>
-                            <select id="sobType" name="sobType" class="sob-type-select" required>
-                                <option value="">Select SOB Type</option>
-                                <option value="HIP_HMO">HIP HMO - Health Insurance Plan</option>
-                                <option value="GHI">GHI - Group Health Incorporated</option>
-                            </select>
-                            <div class="sob-type-hint">Manual selection required for accurate validation</div>
-                        </div>
-
-                        <!-- Submit Section -->
-                        <div class="submit-section">
-                            <div class="status-text" id="statusText">Select both files to proceed</div>
-                            <button type="submit" class="submit-btn" id="submitBtn" disabled>
-                                <span class="loading-spinner">
-                                    <span class="spinner"></span>
-                                </span>
-                                <span class="btn-text">Validate Files</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <div class="shape-bg">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
     </div>
+    <div class="container">
+        <h1 class="heading">VBM Validator</h1>
 
-    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+        <!-- Error/Success Messages -->
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+
+        <form id="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+            <div class="upload-row">
+                <div class="upload-card">
+                    <h2 class="upload-label">Summary Of Benefits</h2>
+                    <div class="upload-area" id="sob-dropzone" onclick="document.getElementById('sobFile').click()">
+                        <span>Drop Excel File (.xlsx or .xls)</span>
+                        <input type="file" id="sobFile" name="sobFile" accept=".xlsx,.xls" style="display:none" onchange="updateFile('sob', this)">
+                        <div class="file-info" id="sobFileInfo"></div>
+                        <button type="button" class="remove-btn" id="sobRemoveBtn" style="display:none;" onclick="event.stopPropagation(); removeFile('sob');">Remove</button>
+                    </div>
+                </div>
+                <div class="upload-card">
+                    <h2 class="upload-label">Vendor Benefit Matrix</h2>
+                    <div class="upload-area" id="vbm-dropzone" onclick="document.getElementById('vendorMatrixFile').click()">
+                        <span>Drop Excel File (.xlsx or .xls)</span>
+                        <input type="file" id="vendorMatrixFile" name="vendorMatrixFile" accept=".xlsx,.xls" style="display:none" onchange="updateFile('vbm', this)">
+                        <div class="file-info" id="vbmFileInfo"></div>
+                        <button type="button" class="remove-btn" id="vbmRemoveBtn" style="display:none;" onclick="event.stopPropagation(); removeFile('vbm');">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sob-type-section">
+                <h2 class="sob-type-label">SOB Type</h2>
+                <div class="sob-type-options">
+                    <label>
+                        <input type="radio" name="sobType" value="GHI" onchange="checkReady()"> GHI
+                    </label>
+                    <label>
+                        <input type="radio" name="sobType" value="HIP_HMO" onchange="checkReady()"> HIP HMO
+                    </label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="validate-btn" id="validateBtn" disabled>Validate</button>
+            </div>
+        </form>
+    </div>
     <script>
-        let selectedFiles = { sob: false, vbm: false };
-
-        function handleFileSelect(input, uploadAreaId) {
-            const file = input.files[0];
-            const uploadArea = document.getElementById(uploadAreaId);
-            const fileInfoId = uploadAreaId.replace('UploadArea', 'FileInfo');
-            const fileNameId = uploadAreaId.replace('UploadArea', 'FileName');
-            const fileSizeId = uploadAreaId.replace('UploadArea', 'FileSize');
+        const files = { sob: null, vbm: null };
+        
+        function isValidExcelFile(fileName) {
+            if (!fileName) return false;
+            const ext = fileName.toLowerCase().split('.').pop();
+            return ext === 'xlsx' || ext === 'xls';
+        }
+        
+        function showError(message) {
+            // Remove any existing error messages
+            const existingError = document.querySelector('.file-error');
+            if (existingError) {
+                existingError.remove();
+            }
             
-            if (file) {
-                uploadArea.classList.add('has-file');
-                document.getElementById(fileInfoId).classList.add('show');
-                document.getElementById(fileNameId).textContent = file.name;
-                document.getElementById(fileSizeId).textContent = formatFileSize(file.size);
-                
-                // Update file status
-                if (uploadAreaId === 'sobUploadArea') {
-                    selectedFiles.sob = true;
-                } else {
-                    selectedFiles.vbm = true;
+            // Create and show new error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'file-error';
+            errorDiv.style.cssText = 'color: #c0392b; background: #fff5f5; border: 1px solid #fed7d7; padding: 1rem; margin-top: 1rem; border-radius: 0.5rem; text-align: center;';
+            errorDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            const form = document.getElementById('uploadForm');
+            container.insertBefore(errorDiv, form);
+            
+            // Auto-remove error after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
                 }
-                updateSubmitButton();
+            }, 5000);
+        }
+        
+        function updateFile(type, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!isValidExcelFile(file.name)) {
+                const fileTypeName = type === 'sob' ? 'Summary Of Benefits (SOB)' : 'Vendor Benefit Matrix (VBM)';
+                const ext = file.name.split('.').pop().toLowerCase();
+                showError(`Invalid file type for ${fileTypeName}. You uploaded a .${ext} file. Please upload an Excel file (.xlsx or .xls only).`);
+                input.value = ''; // Clear the input
+                return;
             }
-        }
-
-        function removeFile(inputId, uploadAreaId) {
-            const input = document.getElementById(inputId);
-            const uploadArea = document.getElementById(uploadAreaId);
-            const fileInfoId = uploadAreaId.replace('UploadArea', 'FileInfo');
             
-            input.value = '';
-            uploadArea.classList.remove('has-file');
-            document.getElementById(fileInfoId).classList.remove('show');
-            
-            // Update file status
-            if (uploadAreaId === 'sobUploadArea') {
-                selectedFiles.sob = false;
-            } else {
-                selectedFiles.vbm = false;
-            }
-            updateSubmitButton();
+            files[type] = file;
+            document.getElementById(`${type}-dropzone`).classList.add('filled');
+            document.getElementById(`${type}FileInfo`).textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            document.getElementById(`${type}RemoveBtn`).style.display = 'inline-block';
+            checkReady();
         }
-
-        function updateSubmitButton() {
-            const submitBtn = document.getElementById('submitBtn');
-            const sobTypeSelect = document.getElementById('sobType');
-            const sobTypeSelected = sobTypeSelect.value !== '';
-            
-            const allFilesSelected = selectedFiles.sob && selectedFiles.vbm;
-            const allValid = allFilesSelected && sobTypeSelected;
-            
-            submitBtn.disabled = !allValid;
-            
-            if (allValid) {
-                submitBtn.classList.remove('disabled');
-            } else {
-                submitBtn.classList.add('disabled');
-            }
+        
+        function removeFile(type) {
+            files[type] = null;
+            const inputElement = type === 'sob' ? document.getElementById('sobFile') : document.getElementById('vendorMatrixFile');
+            inputElement.value = '';
+            document.getElementById(`${type}-dropzone`).classList.remove('filled');
+            document.getElementById(`${type}FileInfo`).textContent = '';
+            document.getElementById(`${type}RemoveBtn`).style.display = 'none';
+            checkReady();
         }
-
-        function handleDragOver(event) {
-            event.preventDefault();
-            event.currentTarget.classList.add('dragover');
+        
+        function checkReady() {
+            const sobTypeSelected = document.querySelector('input[name="sobType"]:checked');
+            document.getElementById('validateBtn').disabled = !(files.sob && files.vbm && sobTypeSelected);
         }
-
-        function handleDragLeave(event) {
-            event.preventDefault();
-            event.currentTarget.classList.remove('dragover');
-        }
-
-        function handleDrop(event, inputId) {
-            event.preventDefault();
-            event.currentTarget.classList.remove('dragover');
+        
+        // Add drag and drop support with validation
+        ['sob', 'vbm'].forEach(type => {
+            const dropzone = document.getElementById(`${type}-dropzone`);
             
-            const files = event.dataTransfer.files;
-            if (files.length > 0) {
-                const input = document.getElementById(inputId);
-                input.files = files;
-                handleFileSelect(input, event.currentTarget.id);
-            }
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // Form submission handling
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            const submitBtn = document.getElementById('submitBtn');
-            const sobTypeSelect = document.getElementById('sobType');
-            const btnText = submitBtn.querySelector('.btn-text');
-            
-            // Validate all requirements
-            if (!selectedFiles.sob || !selectedFiles.vbm) {
+            dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                alert('Please select both SOB and VBM files.');
-                return false;
-            }
+                dropzone.style.backgroundColor = 'rgba(79, 172, 254, 0.1)';
+            });
             
-            if (!sobTypeSelect.value) {
+            dropzone.addEventListener('dragleave', (e) => {
                 e.preventDefault();
-                alert('Please select an SOB type.');
-                return false;
-            }
+                dropzone.style.backgroundColor = '';
+            });
             
-            if (submitBtn.disabled || submitBtn.classList.contains('loading')) {
+            dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
-                return false;
-            }
-            
-            // Show loading state
-            submitBtn.classList.add('loading');
-            submitBtn.disabled = true;
-            btnText.textContent = 'Processing...';
+                dropzone.style.backgroundColor = '';
+                
+                const droppedFiles = e.dataTransfer.files;
+                if (droppedFiles.length > 0) {
+                    const file = droppedFiles[0];
+                    
+                    // Validate file type
+                    if (!isValidExcelFile(file.name)) {
+                        const fileTypeName = type === 'sob' ? 'Summary Of Benefits (SOB)' : 'Vendor Benefit Matrix (VBM)';
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        showError(`Invalid file type for ${fileTypeName}. You dropped a .${ext} file. Please drop an Excel file (.xlsx or .xls only).`);
+                        return;
+                    }
+                    
+                    // Update the file input
+                    const inputElement = type === 'sob' ? document.getElementById('sobFile') : document.getElementById('vendorMatrixFile');
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    inputElement.files = dataTransfer.files;
+                    
+                    // Update the UI
+                    updateFile(type, inputElement);
+                }
+            });
         });
-
-        // SOB Type selection handler
-        document.getElementById('sobType').addEventListener('change', function() {
-            updateSubmitButton();
-        });
-
-        // Initialize
-        updateSubmitButton();
     </script>
 </body>
 </html> 

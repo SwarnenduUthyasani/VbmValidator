@@ -601,7 +601,7 @@
                         <div class="card-subtitle">Source Data - Correct Values</div>
                     </div>
                     <div class="card-body">
-                        <div class="info-section">
+                        <div class="info-section" th:if="${currentSOBBenefit != null}">
                             <div class="section-title">Cost Sharing</div>
                             <div class="cost-display">
                                 <div class="cost-amount" th:text="${currentError.sobValue ?: 'Not specified'}">$750 copay per admission</div>
@@ -751,12 +751,13 @@
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        const validationErrors = /*[[${validationResult.errors}]]*/ [];
+        const validationResult = /*[[${validationResult}]]*/ null;
+        const validationErrors = validationResult ? validationResult.errors : [];
         let currentErrorIndex = /*[[${currentErrorIndex}]]*/ 0;
 
         function navigateError(newIndex) {
             if (newIndex >= 0 && newIndex < validationErrors.length) {
-                window.location.href = `/validation-results?errorIndex=${newIndex}`;
+                window.location.href = `/validation-results/details?errorIndex=${newIndex}`;
             }
         }
 
